@@ -228,15 +228,7 @@ function realGrowYear(){
   page('Accueil');
 }
 
-S.age++;S.year++;S.chapter++;
-S.energy=90;S.school=clamp(S.school);
-if(S.age===8){S.academy="Académie de Labé";S.club=S.academy;S.rep+=5}
-if(S.age===10){S.club="Académie de Labé";S.rep+=8;S.coach+=8}
-if(S.age===12){S.rep+=10;alert("🔎 Détection : des recruteurs commencent à suivre ton parcours.")}
-if(S.age===14){S.rep+=10;alert("✈️ Tu peux désormais recevoir des invitations à des essais importants.")}
-if(S.age===16){if(overall()>55){S.club=CLUBS["Guinée"][rnd(1,4)];S.rep+=12}else S.club="Académie de Labé"}
-if(S.age===18){S.contract={club:S.club,duration:2,salary:2500000};S.money+=2500000;S.agent=8;alert("📝 Premier contrat professionnel !")}
-}
+
 function trialEvent(){if(S.age<12)return;let country=COUNTRIES[rnd(1,COUNTRIES.length-1)],list=CLUBS[country]||["Club local"];let club=list[rnd(0,list.length-1)];let ok=overall()+S.rep+rnd(0,50)>155;if(ok){S.country=country;S.club=club;S.rep+=15;S.money+=rnd(500000,5000000);S.agent+=5;alert(`🎫 Essai réussi : ${club} (${country}).`)}else alert(`🎫 Essai à ${club}. Le staff demande encore du développement. Tu reviens plus fort.`)}
 function seasonEvent(){
 let r=rnd(1,7);
