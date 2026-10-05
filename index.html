@@ -99,14 +99,39 @@ if(S.age<=34)return"Tu es installé. Tu dois gérer performances, contrats, rép
 return"Ta carrière approche de sa conclusion. Une nouvelle vie peut commencer : entraîneur, dirigeant, entrepreneur, propriétaire ou mentor.";
 }
 function scene(){
-let t="",c=[];
-if(S.age===6){t="Tes parents : « Montre-nous que tu peux aimer le football sans abandonner tes études. »";c=["Promettre de travailler à l'école et s'entraîner sérieusement","Insister uniquement sur le football","Demander au coach de discuter avec la famille"]}
-else if(S.age===12){t="Un recruteur est dans les tribunes. Ton entraîneur te demande comment tu vas gérer la pression.";c=["Jouer simple et montrer mes qualités","Forcer pour impressionner","Rester concentré sur l'équipe"]}
-else if(S.age===15){t="Une invitation à un essai arrive. La famille s'inquiète du voyage.";c=["Rassurer la famille et demander un encadrement complet","Partir sans en parler","Refuser par peur de l'inconnu"]}
-else if(S.age>=18&&S.age<35){t="Une nouvelle journée commence. Quelle priorité choisis-tu ?";c=["Entraînement","Repos et récupération","Développer ma vie et mes finances","Parler avec mon agent","Préparer le prochain match"]}
-else {t="La journée avance. Ton expérience et tes choix façonnent la suite.";c=["Travailler","Étudier / apprendre","Passer du temps avec la famille","Préparer l'avenir"]}
-return `<div class="card scene"><b>${t}</b>${c.map((x,i)=>`<button class="choice" onclick="decision(${i})">${x}</button>`).join("")}</div>`
+  let t="",c=[];
+  
+  // -- SYSTÈME NARRATIF 6 ANS --
+  if(S.age == 6){
+    if(!S.choix_ecole_init){
+      // Premier dialogue fondateur (Famille)
+      t = "Tes parents s'assoient avec toi. <br>Parent : « Tu dois penser à tes études, l'avenir est important. Le football est un jeu, mais l'école est sérieuse. »";
+      c = [
+        ["« Je veux devenir footballeur professionnel. »", "S.ambition='foot';S.family-=2;S.mental+=5;S.choix_ecole_init=true;alert('Tes parents froncent les sourcils...')"],
+        ["« Je vais essayer de faire les deux. »", "S.ambition='equilibre';S.school+=3;S.family+=3;S.choix_ecole_init=true;alert('Tes parents semblent rassurés.')"],
+        ["« Je ne sais pas encore. »", "S.ambition='neutre';S.choix_ecole_init=true;alert('Tes parents hochent la tête.')"]
+      ];
+    } else if(S.matches > 5 && !S.evenement_ecole_1){
+      // Événement scolaire après quelques matchs (École)
+      t = "C'est la fin du trimestre à l'école de Conakry. Ton professeur te rend tes notes. <br>Professeur : « Tes résultats sont en baisse. Le football prend trop de place. »";
+      c = [
+        ["Promettre de faire tes devoirs", "S.school+=10;S.mental-=2;S.evenement_ecole_1=true;alert('Le professeur hoche la tête.')"],
+        ["Demander une dérogation sportive", "S.school-=5;S.evenement_ecole_1=true;alert('Le professeur refuse fermement.')"]
+      ];
+    } else {
+      t = "Une nouvelle journée d'entraînement et d'école commence.";
+    }
+  }
+  
+  // -- Suite du jeu (Générique pour l'instant) --
+  else if(S.age==12){t="Un recruteur est dans les tribunes !";c=[["Jouer simple","S.team+=5"],["Tenter des dribbles","S.rep+=5"]];}
+  else if(S.age==15){t="Une invitation à un essai pro !";c=[["Accepter","page('Essai')"],["Refuser","S.mental-=10"]];}
+  else {t="La journée avance. Ton expérience et ta réputation grandissent.";}
+  
+  // Rendu de l'interface
+  return `<div class="card scene"><b>${t}</b></div>${c.map((x,i)=>`<button onclick="${x[1]};advanceMaybe();persist();page('Accueil')">${x[0]}</button>`).join(" ")}`;
 }
+
 function decision(i){
 if(S.age===6){if(i===0){S.school+=8;S.family+=10;S.tech+=3}else if(i===1){S.tech+=7;S.school-=8;S.family-=8}else{S.coach+=12;S.family+=6;S.tech+=4}}
 else if(S.age===12){if(i===0){S.mental+=6;S.vision+=5;S.rep+=6}else if(i===1){S.finish+=8;S.mental-=5;S.rep+=2}else{S.team+=8;S.vision+=4;S.rep+=5}}
