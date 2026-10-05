@@ -125,9 +125,18 @@ else {S.rep=Math.max(0,S.rep-1);S.team+=1;alert("Match difficile. Ton équipe n'
 if(S.age>=17&&S.country==="Guinée"&&Math.random()<.18){S.caps++;if(Math.random()<.25)S.ntgoals++;S.rep+=5;alert("🇬🇳 Convocation en sélection nationale !")}
 }
 function advanceMaybe(){
-if(S.age<18){if(S.matches%4===0)growYear();return}
-if(Math.random()<.32)seasonEvent();
+  // L'âge n'avance que si la saison compte au moins 15 matchs joués
+  if(S.age < 18){
+    if(S.matches >= 15){
+      alert("Saison terminée ! Il est temps de faire le bilan annuel.");
+      growYear();
+      S.matches = 0; // Réinitialise le compteur de matchs pour la nouvelle saison
+    }
+  }
+  if(Math.random() < 0.32) seasonEvent();
 }
+
+
 function growYear(){
 S.age++;S.year++;S.chapter++;
 S.energy=90;S.school=clamp(S.school);
