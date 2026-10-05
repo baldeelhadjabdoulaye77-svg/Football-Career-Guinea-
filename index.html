@@ -109,7 +109,7 @@ function scene(){
       c = [
         ["« Je veux devenir footballeur professionnel. »", "S.ambition='foot';S.family-=2;S.mental+=5;S.choix_ecole_init=true;alert('Tes parents froncent les sourcils...')"],
         ["« Je vais essayer de faire les deux. »", "S.ambition='equilibre';S.school+=3;S.family+=3;S.choix_ecole_init=true;alert('Tes parents semblent rassurés.')"],
-        ["« Je ne sais pas encore. »", "S.ambition='neutre';S.choix_ecole_init=true;alert('Tes parents hochent la tête.')"]
+        ["« Je ne sais pas encore. »", "S.ambition='neutre'"]
       ];
     } else if(S.matches > 5 && !S.evenement_ecole_1){
       // Événement scolaire après quelques matchs (École)
@@ -180,6 +180,54 @@ function advanceMaybe(){
 
 
 function growYear(){
+  // -- SYSTÈME DE BILAN DE SAISON (Conakry/Labé) --
+  if(S.age < 12){
+    let bilanMsg = `--- SAISON TERMINÉE (ÂGE ${S.age}) ---<br>`;
+    
+    // 1. Calcul de la Réputation et des Récompenses
+    let trophée = false;
+    if(S.rep > 50 && S.skill > 30){
+      alert("🏆 RÉCOMPENSE DE SAISON : Tu es élu Meilleur Jeune de la ligue de quartier !");
+      S.awards++; S.rep+=15;
+      bilanMsg += "🏆 Élu Meilleur Jeune.<br>";
+      trophée = true;
+    }
+    
+    // 2. Bilan Scolaire
+    bilanMsg += `École : ${S.school > 60 ? "Très bons résultats." : "Résultats moyens."}<br>`;
+    if(S.school > 80){ alert("Parents : « Tes notes sont excellentes ! Tu peux aller à l'entraînement demain. »"); S.family+=5; }
+    
+    // 3. Récapitulatif du Style
+    if(S.style === 'dribble'){
+      alert("Note : Le quartier te connaît pour tes dribbles.");
+      S.rep+=5; S.skill+=5;
+    }
+    
+    // Affiche le bilan complet via scene()
+    t = bilanMsg;
+    c = [["Faire le bilan et passer à l'année suivante", "realGrowYear()"]];
+    persist();
+    page('Accueil');
+    return; // Arrête pour afficher le bilan
+  } else {
+    realGrowYear();
+  }
+}
+
+// Fonction interne pour valider la transition d'âge après le bilan
+function realGrowYear(){
+  S.age++; S.year++; S.chapter++;
+  S.energy=90; S.school=clamp(S.school);
+  
+  // -- Détections / Académies (Ancien système, maintenu) --
+  if(S.age===8){S.academy="Académie de Labé";S.club="Académie de Labé";}
+  if(S.age===10){S.club="Académie de Labé";S.rep+=5;}
+  if(S.age===12){S.rep+=10;alert("✈️️ Détection : Un club européen s'intéresse à toi !");}
+  
+  persist();
+  page('Accueil');
+}
+
 S.age++;S.year++;S.chapter++;
 S.energy=90;S.school=clamp(S.school);
 if(S.age===8){S.academy="Académie de Labé";S.club=S.academy;S.rep+=5}
