@@ -141,9 +141,26 @@ advanceMaybe();persist();page("Accueil")
 }
 function train(){if(S.energy<25){alert("Tu es trop fatigué. Récupère.");return}S.energy-=18;S.tech+=rnd(1,4);S.speed+=rnd(0,3);S.finish+=rnd(1,4);S.vision+=rnd(0,3);S.phys+=rnd(1,3);S.mental+=rnd(0,2);S.coach+=2;if(Math.random()<.08)S.injury+=1}
 function rest(){S.energy=clamp(S.energy+30);if(S.injury>0)S.injury--;S.mental+=1}
-function match(){
-if(S.energy<35||S.injury>0||S.suspension>0){alert("Tu ne peux pas jouer maintenant : fatigue, blessure ou suspension.");return}
-S.matches++;S.energy-=30;
+  // Nouveau système de gameplay actif pour la Guinée
+  if(S.age < 12){
+    // Avant 12 ans : On choisit son style de jeu
+    t = `Jour de match à Conakry ! <br>Ton entraîneur de quartier te donne tes consignes. Comment comptes-tu jouer aujourd'hui ?`;
+    c = [
+      ["Jouer collectif (Passe)", "S.style='passe';S.team+=2;S.mental+=1;alert('L\\'entraîneur apprécie ton altruisme.')"],
+      ["Tenter des actions individuelles (Dribble)", "S.style='dribble';S.rep+=2;S.skill+=1;alert('Le public locale commence à retenir ton nom.')"],
+      ["Se concentrer sur la défense", "S.style='defense';S.strength+=2;S.team+=1;alert('Tu formes un mur solide.')"]
+    ];
+    // Applique les coûts de base et rafraîchit la page pour afficher le choix via scene()
+    S.matches++; 
+    S.energy-=30; 
+    persist(); 
+    page('Accueil'); 
+    return; // Arrête la fonction ici pour laisser le joueur choisir via la fonction scene()
+  } else {
+    // Après 12 ans : Ancien système de simulation automatique (pour l'instant)
+    S.matches++;S.energy-=30;
+  }
+
 let strength=overall()+S.coach*.15+S.team*.15+rnd(-25,25), opp=rnd(55,92);
 if(strength>opp){let g=Math.random()<.35?2:1;S.goals+=g;S.rep+=rnd(3,8);S.fans+=rnd(2,7);S.team+=3;S.awards+=Math.random()<.18?1:0;if(Math.random()<.15)S.trophies++;alert(`Victoire ! Tu as marqué ${g} but(s).`)}
 else {S.rep=Math.max(0,S.rep-1);S.team+=1;alert("Match difficile. Ton équipe n'a pas gagné, mais tu peux progresser.");}
